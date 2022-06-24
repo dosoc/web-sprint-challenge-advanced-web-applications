@@ -1,24 +1,24 @@
 import React, { useState } from 'react'
 import PT from 'prop-types'
-import axiosWithAuth from '../axios/index'
 
 const initialFormValues = {
   username: '',
   password: '',
 }
 export default function LoginForm(props) {
-  const [values, setValues] = useState(initialFormValues)
+  const [values, setValues] = useState(initialFormValues);
+  const { login } = props;
   // ✨ where are my props? Destructure them here
   
 
   const onChange = evt => {
     const { id, value } = evt.target
-    setValues({ ...values, [id]: value })
+    setValues({ ...values, [id]: value.trim() })
   }
 
   const onSubmit = evt => {
     evt.preventDefault()
-    axiosWithAuth().post()
+    login(values)
     // ✨ implement
     // axios post
   }

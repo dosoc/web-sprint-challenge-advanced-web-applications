@@ -5,6 +5,8 @@ import LoginForm from './LoginForm'
 import Message from './Message'
 import ArticleForm from './ArticleForm'
 import Spinner from './Spinner'
+import axios from 'axios'
+import axiosWithAuth from '../axios/index'
 
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
@@ -30,6 +32,18 @@ export default function App() {
   }
 
   const login = ({ username, password }) => {
+    setMessage('');
+    setSpinnerOn(true)
+    axios.post('http://localhost:9000/api/login', {username, password})
+    .then(res=>{
+      localStorage.setItem('token', res.data.token)
+      setMessage(res.data.message)
+      navigate('/articles')
+      setSpinnerOn(false)
+    })
+    .catch(err=>{
+      console.error(err)
+    })
     // ✨ implement
     // We should flush the message state, turn on the spinner
     // and launch a request to the proper endpoint.
@@ -39,6 +53,18 @@ export default function App() {
   }
 
   const getArticles = () => {
+    setMessage('')
+    setSpinnerOn(true)
+    axiosWithAuth().get('/articles')
+    .then(res=> {
+      setArticles(res.data.articles)
+      setMessage(res.data.message)
+      setSpinnerOn(false)
+    })
+    .catch(err=> {
+      console.error(err)
+      navigate('/')
+    })
     // ✨ implement
     // We should flush the message state, turn on the spinner
     // and launch an authenticated request to the proper endpoint.
@@ -50,6 +76,20 @@ export default function App() {
   }
 
   const postArticle = article => {
+    setMessage('')
+    setSpinnerOn(true)
+    axiosWithAuth().post(`/articles`, article)
+    .then(res=> {
+      setArticles([
+        ...articles,
+        res.data.article
+      ])
+      setMessage(res.data.message)
+      setSpinnerOn(false)
+    })
+    .catch(err=> {
+      console.error(err)
+    })
     // ✨ implement
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
@@ -57,6 +97,17 @@ export default function App() {
   }
 
   const updateArticle = ({ article_id, article }) => {
+    setMessage('')
+    setSpinnerOn(true)
+    axiosWithAuth().put(`/articles/${article_id}`, article)
+    .then(res=> {
+      console.log(res)
+      setMessage(res.data.message)
+      setSpinnerOn(false)
+    })
+    .catch(err=> {
+      console.error(err)
+    })
     // ✨ implement
     // You got this!
   }
@@ -68,8 +119,8 @@ export default function App() {
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
-      <Spinner />
-      <Message />
+      <Spinner on={spinnerOn} />
+      <Message message={message}/>
       <button id="logout" onClick={logout}>Logout from app</button>
       <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
         <h1>Advanced Web Applications</h1>
@@ -78,11 +129,11 @@ export default function App() {
           <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
         </nav>
         <Routes>
-          <Route path="/" element={<LoginForm />} />
+          <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm />
-              <Articles />
+              <ArticleForm postArticle={postArticle}/>
+              <Articles getArticles={getArticles} articles={articles} />
             </>
           } />
         </Routes>

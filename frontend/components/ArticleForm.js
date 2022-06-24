@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import PT from 'prop-types'
-import axiosWithAuth from '../axios/index'
 
 const initialFormValues = { title: '', text: '', topic: '' }
 
 export default function ArticleForm(props) {
   const [values, setValues] = useState(initialFormValues)
+  const { postArticle } = props
   // ✨ where are my props? Destructure them here
 
   useEffect(() => {
@@ -22,14 +22,21 @@ export default function ArticleForm(props) {
 
   const onSubmit = evt => {
     evt.preventDefault()
+    postArticle(values)
     // ✨ implement
     // We must submit a new post or update an existing one,
     // depending on the truthyness of the `currentArticle` prop.
   }
 
   const isDisabled = () => {
+    return values.title.trim() && values.text.trim() && values.topic.trim()? false: true;
     // ✨ implement
     // Make sure the inputs have some values
+  }
+
+  const onCancel = (e) => {
+    e.preventDefault()
+    setValues(initialFormValues)
   }
 
   return (
@@ -59,7 +66,7 @@ export default function ArticleForm(props) {
       </select>
       <div className="button-group">
         <button disabled={isDisabled()} id="submitArticle">Submit</button>
-        <button onClick={Function.prototype}>Cancel edit</button>
+        <button onClick={onCancel}>Cancel edit</button>
       </div>
     </form>
   )
