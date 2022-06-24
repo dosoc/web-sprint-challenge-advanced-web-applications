@@ -4,7 +4,7 @@ import PT from 'prop-types'
 
 export default function Articles(props) {
   // ✨ where are my props? Destructure them here
-  const { getArticles, articles, deleteArticle, setCurrentArticleId } = props
+  const { getArticles, articles, deleteArticle, setCurrentArticleId, currentArticleId} = props
 
   const token = localStorage.getItem('token')
   if(!token) {
@@ -19,7 +19,7 @@ export default function Articles(props) {
   }, [])
 
   const handleEdit = (id) => {
-
+    setCurrentArticleId(id)
   }
 
   const handleDelete = (id) => {
