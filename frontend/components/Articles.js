@@ -18,9 +18,8 @@ export default function Articles(props) {
     getArticles()
   }, [])
 
-  const handleEdit = (e) => {
-    console.log(e)
-
+  const handleEdit = () => {
+    
   }
 
   return (
