@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import PT from 'prop-types'
+import PT from 'prop-types';
+import axiosWithAuth from '../axios/index'
 
 const initialFormValues = { title: '', text: '', topic: '' }
 
 export default function ArticleForm(props) {
   const [values, setValues] = useState(initialFormValues)
-  const { postArticle } = props
+  const { postArticle, CurrentArticleId } = props
   // ✨ where are my props? Destructure them here
 
   useEffect(() => {
+    if (CurrentArticleId) {
+      setValues
+    }
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
     // if it's truthy, we should set its title, text and topic into the corresponding
     // values of the form. If it's not, we should reset the form back to initial values.
-  })
+  }, CurrentArticleId)
 
   const onChange = evt => {
     const { id, value } = evt.target
@@ -44,7 +48,7 @@ export default function ArticleForm(props) {
     // ✨ fix the JSX: make the heading display either "Edit" or "Create"
     // and replace Function.prototype with the correct function
     <form id="form" onSubmit={onSubmit}>
-      <h2>Create Article</h2>
+      <h2>{CurrentArticleId? "Edit Article":"Create Article"}</h2>
       <input
         maxLength={50}
         onChange={onChange}

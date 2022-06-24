@@ -4,7 +4,7 @@ import PT from 'prop-types'
 
 export default function Articles(props) {
   // ✨ where are my props? Destructure them here
-  const { getArticles, articles } = props
+  const { getArticles, articles, deleteArticle, setCurrentArticleId } = props
 
   const token = localStorage.getItem('token')
   if(!token) {
@@ -18,8 +18,12 @@ export default function Articles(props) {
     getArticles()
   }, [])
 
-  const handleEdit = () => {
-    
+  const handleEdit = (id) => {
+
+  }
+
+  const handleDelete = (id) => {
+    deleteArticle(id)
   }
 
   return (
@@ -39,8 +43,8 @@ export default function Articles(props) {
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button disabled={false} onClick={handleEdit}>Edit</button>
-                  <button disabled={true} onClick={Function.prototype}>Delete</button>
+                  <button disabled={false} onClick={()=>handleEdit(art.article_id)}>Edit</button>
+                  <button disabled={false} onClick={()=>handleDelete(art.article_id)}>Delete</button>
                 </div>
               </div>
             )

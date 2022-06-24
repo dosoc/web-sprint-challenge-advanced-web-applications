@@ -15,7 +15,7 @@ export default function App() {
   // ✨ MVP can be achieved with these states
   const [message, setMessage] = useState('')
   const [articles, setArticles] = useState([])
-  const [currentArticleId, setCurrentArticleId] = useState()
+  const [currentArticleId, setCurrentArticleId] = useState("123")
   const [spinnerOn, setSpinnerOn] = useState(false)
 
   // ✨ Research `useNavigate` in React Router v.6
@@ -40,7 +40,7 @@ export default function App() {
   const login = ({ username, password }) => {
     setMessage('');
     setSpinnerOn(true)
-    axios.post('http://localhost:9000/api/login', {username, password})
+    axios.post(loginUrl, {username, password})
     .then(res=>{
       localStorage.setItem('token', res.data.token)
       setMessage(res.data.message)
@@ -119,6 +119,17 @@ export default function App() {
   }
 
   const deleteArticle = article_id => {
+    setMessage('')
+    setSpinnerOn(true)
+    axiosWithAuth().delete(`/articles/${article_id}`)
+      .then(res=>{
+        setArticles(articles.filter(art=>art.article_id!==article_id))
+        setMessage(res.data.message)
+        setSpinnerOn(false)
+      })
+      .catch(err=> {
+        console.error(err)
+      })
     // ✨ implement
   }
 
@@ -138,8 +149,16 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm postArticle={postArticle}/>
-              <Articles getArticles={getArticles} articles={articles} />
+              <ArticleForm 
+                postArticle={postArticle} 
+                updateArticle={updateArticle} 
+                currentArticleId={currentArticleId}
+                setCurrentArticleId={setCurrentArticleId}/>
+              <Articles 
+                getArticles={getArticles} 
+                articles={articles}
+                setCurrentArticleId={setCurrentArticleId}
+                deleteArticle={deleteArticle} />
             </>
           } />
         </Routes>
